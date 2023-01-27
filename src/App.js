@@ -4,11 +4,17 @@ import Button from "./components/button";
 
 function App() {
   const [cout, setCout] = useState(0);
-  const [name, setName] = useState("");
-  const [usia, setUsia] = useState("");
-  const [tempatTanggalLahir, setTempatTanggalLahir] = useState("");
+  // const [name, setName] = useState("");
+  // const [usia, setUsia] = useState("");
+  // const [tempatTanggalLahir, setTempatTanggalLahir] = useState("");
+  //Manipulasi State menggunakan Object
+  const [form, setForm] = useState({
+    name: "",
+    usia: "",
+    tempatTanggalLahir: "",
+  });
   const handleClick = () => {
-    setUsia(2022 - tempatTanggalLahir);
+    setForm({ ...form, usia: 2022 - form.tempatTanggalLahir });
   };
   return (
     <>
@@ -20,20 +26,22 @@ function App() {
         Name:{" "}
         <input
           type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
         <br />
         <br />
         Tempat Tanggal Lahir:{" "}
         <input
           type="number"
-          value={tempatTanggalLahir}
-          onChange={(e) => setTempatTanggalLahir(e.target.value)}
+          value={form.tempatTanggalLahir}
+          onChange={(e) =>
+            setForm({ ...form, tempatTanggalLahir: e.target.value })
+          }
         />
         <br />
         <br />
-        Umur saya : {usia}
+        Umur saya : {form.usia}
         <br />
         <br />
         <Button
