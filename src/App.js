@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import Button from "./components/button";
+import Input from "./components/input";
 
 function App() {
   const [cout, setCout] = useState(0);
@@ -16,6 +17,10 @@ function App() {
   const handleClick = () => {
     setForm({ ...form, usia: 2022 - form.tempatTanggalLahir });
   };
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
   return (
     <>
       <h2>Couter :{cout}</h2>
@@ -24,20 +29,20 @@ function App() {
       <form>
         <br />
         Name:{" "}
-        <input
+        <Input
           type="text"
           value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          name="name"
+          onChange={handleChange}
         />
         <br />
         <br />
         Tempat Tanggal Lahir:{" "}
-        <input
+        <Input
           type="number"
           value={form.tempatTanggalLahir}
-          onChange={(e) =>
-            setForm({ ...form, tempatTanggalLahir: e.target.value })
-          }
+          name="tempatTanggalLahir"
+          onChange={handleChange}
         />
         <br />
         <br />
