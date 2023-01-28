@@ -63,6 +63,14 @@ function App() {
           onChange={handleChange}
         />
         <br />
+        Tanpa Name:{" "}
+        <Input
+          type="number"
+          value={form.tempatTanggalLahir}
+          //name="tempatTanggalLahir" contoh jika kita buat input baru dan tidak memberikan  namenya.
+          onChange={handleChange}
+        />
+        <br />
         <br />
         Umur saya : {form.usia}
         <br />
