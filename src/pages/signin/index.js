@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import { Card, Container } from "react-bootstrap";
-import Form from "react-bootstrap/Form";
-import SButton from "../../components/Button";
-import TextInputWithLabel from "../../components/TextInputWIthLabel";
 import axios from "axios";
 import SAlert from "../../components/Alert";
 import { useNavigate } from "react-router-dom";
-
+import { config } from "../../config";
+import SForm from "./form";
 function PageSignin() {
   //state
 
@@ -43,14 +41,13 @@ function PageSignin() {
       //jika di submit maka loading nya true
       setIsLoading(true);
       const res = await axios.post(
-        "http://localhost:9000/api/v1/cms/auth/signin",
-        {
-          email: form.email,
-          password: form.password,
-        }
+        `${config.api_host_dev}/cms/auth/signin`,
+        // ini ada adalah payloadnya
+        form
       );
       // jika dia sukses signin maka akan di kembalikan menjadi false
       setIsLoading(false);
+      // untuk pindah ke halaman dashboard
       navigate("/");
       console.log(res.data.data.token);
     } catch (err) {
@@ -77,38 +74,12 @@ function PageSignin() {
       <Card style={{ width: "50%" }} className="m-auto mt-5">
         <Card.Body>
           <Card.Title>Form Login</Card.Title>
-          <Form>
-            <TextInputWithLabel
-              label={"Email Address"}
-              name="email" //ini name nya
-              value={form.email}
-              type="email"
-              placeholder="Enter email"
-              onChange={handleChange}
-            />
-
-            <TextInputWithLabel
-              label={"Password"}
-              name="password" //ini name nya
-              value={form.password}
-              type="password"
-              placeholder="Enter password"
-              onChange={handleChange}
-            />
-            {/* kita button di klik maka dia akan loading, button nya tidak bisa dklik
-                artinya button nya itu disabled == true, tetapi jika, loadingnya false
-                dapat dari isLoading NILAI TRUE OR FALSE.
-                maka  tombol bisa di klik artinya disabeldnya itu == false,
-            */}
-            <SButton
-              loading={isLoading}
-              disabled={isLoading}
-              action={handleSubmit}
-              variant="primary"
-            >
-              Submit
-            </SButton>
-          </Form>
+          <SForm
+            handleChange={handleChange}
+            isLoading={isLoading}
+            handleSubmit={handleSubmit}
+            form={form}
+          />
         </Card.Body>
       </Card>
     </Container>
