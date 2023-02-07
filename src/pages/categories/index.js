@@ -1,15 +1,37 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
-import { Container, Table } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
+import { Container, Table, Spinner } from "react-bootstrap";
 import SButton from "../../components/Button";
 import SBreadCrumb from "../../components/Breadcrumb";
 import SNavbar from "../../components/Navbar";
+import axios from "axios";
+import { config } from "../../config";
 export default function PageCategories() {
-  // Ngambil token dari localStorage, mengggunakan getItem (KEYnya) saja
   const token = localStorage.getItem("token");
-  // console.log("token");
-  // console.log(token);
-  // Ngecek jika tokennya nggak ada maka redirect ke halaman signin.
+  const navigate = useNavigate();
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  useEffect(() => {
+    setIsLoading(true);
+    const getCategoriesAPI = async () => {
+      try {
+        const res = await axios.get(`${config.api_host_dev}/cms/categories`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        // Proses pemasukan data yang categories kedalam useState Data
+        setData(res.data.data);
+        setIsLoading(false);
+      } catch (error) {
+        setIsLoading(false);
+        console.log(error);
+      }
+    };
+
+    getCategoriesAPI();
+  }, []);
 
   if (!token) return <Navigate to="/signin" replace={true} />;
   return (
@@ -18,35 +40,35 @@ export default function PageCategories() {
 
       <Container className="mt-3">
         <SBreadCrumb textSecound="Categories" />
-        <SButton>Tambah</SButton>
+        <SButton action={() => navigate("/categories/create")}>Tambah</SButton>
 
         <Table className="mt-3" striped bordered hover variant="dark">
           <thead>
             <tr>
-              <th>#</th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Username</th>
+              <th>No</th>
+              <th>Name</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>Mark</td>
-              <td>Otto</td>
-              <td>@mdo</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Jacob</td>
-              <td>Thornton</td>
-              <td>@fat</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td colSpan={2}>Larry the Bird</td>
-              <td>@twitter</td>
-            </tr>
+            {isLoading ? (
+              // <Spinner />
+              <tr>
+                <td colSpan={data.length + 1} style={{ textAlign: "center" }}>
+                  <div className="flex align-items-center justify-content-center">
+                    <Spinner animation="grow" variant="light" />
+                  </div>
+                </td>
+              </tr>
+            ) : (
+              data.map((data, index) => (
+                <tr key={index}>
+                  <td>{(index += 1)}</td>
+                  <td>{data.name}</td>
+                  <td>Otto</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </Table>
       </Container>
