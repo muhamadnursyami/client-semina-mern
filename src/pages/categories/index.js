@@ -11,10 +11,14 @@ export default function PageCategories() {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  // USE EFFECT
   useEffect(() => {
     setIsLoading(true);
     const getCategoriesAPI = async () => {
       try {
+        // Disini get memiliki 2 parameter yang pertama url, yang kedua headres jika membutuhkan
+        // sedangkan kalo post itu memiliki bisa 3 paramater yaitu: url, headers dan form -> payloadnya
         const res = await axios.get(`${config.api_host_dev}/cms/categories`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -63,6 +67,7 @@ export default function PageCategories() {
             ) : (
               data.map((data, index) => (
                 <tr key={index}>
+                  {/* untuk membuat idnya 1,2,3 */}
                   <td>{(index += 1)}</td>
                   <td>{data.name}</td>
                   <td>Otto</td>

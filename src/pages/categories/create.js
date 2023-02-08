@@ -4,7 +4,12 @@ import SAlert from "../../components/Alert";
 import { useNavigate, Navigate } from "react-router-dom";
 import Form from "./form";
 import SBreadCrumb from "../../components/Breadcrumb";
+import axios from "axios";
+import { config } from "../../config";
+import SNavbar from "../../components/Navbar";
 export default function CategoryCreate() {
+  //buat ngambil token yang ada di localStorage
+  const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -25,6 +30,12 @@ export default function CategoryCreate() {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
+      // kalo post itu memiliki bisa 3 paramater yaitu: url, headers dan form -> payloadnya
+      await axios.post(`${config.api_host_dev}/cms/categories`, form, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       navigate("/categories");
       setIsLoading(false);
     } catch (error) {
@@ -38,19 +49,22 @@ export default function CategoryCreate() {
     }
   };
   return (
-    <Container>
-      <SBreadCrumb
-        textSecound={"Categories"}
-        urlSecound={"/categories"}
-        textThird="create"
-      />
-      {alert.status && <SAlert type={alert.type} message={alert.message} />}
-      <Form
-        form={form}
-        isLoading={isLoading}
-        handleChange={handleChange}
-        handleSubmit={handleSubmit}
-      />
-    </Container>
+    <>
+      <SNavbar />
+      <Container>
+        <SBreadCrumb
+          textSecound={"Categories"}
+          urlSecound={"/categories"}
+          textThird="create"
+        />
+        {alert.status && <SAlert type={alert.type} message={alert.message} />}
+        <Form
+          form={form}
+          isLoading={isLoading}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+        />
+      </Container>
+    </>
   );
 }
