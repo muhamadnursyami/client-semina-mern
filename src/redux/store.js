@@ -18,6 +18,7 @@ import authReducer from "./auth/reducer";
 const composerEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const rootReducers = combineReducers({
+  // auth yang di ambil untuk listener store.getState().auth; di file listener
   auth: authReducer,
   // categories: categoriesReducer,
   // notif: notifReducer,

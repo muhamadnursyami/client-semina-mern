@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import { Card, Container } from "react-bootstrap";
-import axios from "axios";
 import SAlert from "../../components/Alert";
-import { useNavigate, Navigate } from "react-router-dom";
-import { config } from "../../config";
+import { useNavigate } from "react-router-dom";
+import { postData } from "../../utils/fetch";
 import SForm from "./form";
+import { useDispatch } from "react-redux"; // Setiap kali ada perubahan di redux nya harus menggunakana useDispath
+import { userLogin } from "../../redux/auth/actions";
 function PageSignin() {
+  const dispatch = useDispatch();
+
   //state
-  const token = localStorage.getItem("token");
+  // const token = localStorage.getItem("token");
 
   const navigate = useNavigate();
 
@@ -41,13 +44,16 @@ function PageSignin() {
     try {
       //jika di submit maka loading nya true
       setIsLoading(true);
-      const res = await axios.post(
-        `${config.api_host_dev}/cms/auth/signin`,
+      const res = await postData(
+        `/cms/auth/signin`,
         // ini ada adalah payloadnya
         form
       );
-      // nyimpan token ke localstorage, setItem ada 2 paramater , 1: KEY, 2: VALUENYA.
-      localStorage.setItem("token", res.data.data.token);
+
+      // // nyimpan token ke localstorage, setItem ada 2 paramater , 1: KEY, 2: VALUENYA.
+      // localStorage.setItem("token", res.data.data.token);
+      // Cara baru untuk menganti yang diatas jadi redux.
+      dispatch(userLogin(res.data.data.token, res.data.data.role));
       // jika dia sukses signin maka akan di kembalikan menjadi false
       setIsLoading(false);
       // untuk pindah ke halaman dashboard
@@ -66,8 +72,9 @@ function PageSignin() {
     }
   };
 
-  //jika tokennya ada maka dia langsung direct ke dasboard
-  if (token) return <Navigate to="/" replace={true} />;
+  //ini diganti jadi redux
+  // //jika tokennya ada maka dia langsung direct ke dasboard
+  // if (token) return <Navigate to="/" replace={true} />;
   return (
     <Container md={12} className="my-5">
       <div className="m-auto" style={{ width: "50%" }}>
