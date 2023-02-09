@@ -11,6 +11,7 @@ function App() {
     listen();
   }, []);
 
+  // Belajar Redux Dulu sebelum lanjut ke video selanjutnya KEEP STRONG MYSELF
   return (
     <BrowserRouter>
       <Routes>

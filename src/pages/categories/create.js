@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Container } from "react-bootstrap";
 import SAlert from "../../components/Alert";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Form from "./form";
 import SBreadCrumb from "../../components/Breadcrumb";
 import axios from "axios";
