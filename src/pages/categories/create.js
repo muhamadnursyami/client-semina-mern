@@ -1,70 +1,72 @@
-import React, { useState } from "react";
-import { Container } from "react-bootstrap";
-import SAlert from "../../components/Alert";
-import { useNavigate } from "react-router-dom";
-import Form from "./form";
-import SBreadCrumb from "../../components/Breadcrumb";
-import axios from "axios";
-import { config } from "../../config";
-import SNavbar from "../../components/Navbar";
-export default function CategoryCreate() {
-  //buat ngambil token yang ada di localStorage
-  const token = localStorage.getItem("token");
-  const navigate = useNavigate();
+import React, { useState } from 'react';
+import { Container } from 'react-bootstrap';
+import SBreadCrumb from '../../components/Breadcrumb';
+import SAlert from '../../components/Alert';
+import Form from './form';
+import { postData } from '../../utils/fetch';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setNotif } from '../../redux/notif/actions';
 
+function CategoryCreate() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [form, setForm] = useState({
-    name: "",
+    name: '',
   });
 
   const [alert, setAlert] = useState({
     status: false,
-    type: "",
-    message: "",
+    type: '',
+    message: '',
   });
 
   const [isLoading, setIsLoading] = useState(false);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async () => {
     setIsLoading(true);
-    try {
-      // kalo post itu memiliki bisa 3 paramater yaitu: url, headers dan form -> payloadnya
-      await axios.post(`${config.api_host_dev}/cms/categories`, form, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      navigate("/categories");
+    const res = await postData('/cms/categories', form);
+    if (res?.data?.data) {
+      dispatch(
+        setNotif(
+          true,
+          'success',
+          `berhasil tambah kategori ${res.data.data.name}`
+        )
+      );
+      navigate('/categories');
       setIsLoading(false);
-    } catch (error) {
+    } else {
       setIsLoading(false);
       setAlert({
         ...alert,
         status: true,
-        type: "danger",
-        message: error.response.data.msg,
+        type: 'danger',
+        message: res.response.data.msg,
       });
     }
   };
+
   return (
-    <>
-      <SNavbar />
-      <Container>
-        <SBreadCrumb
-          textSecound={"Categories"}
-          urlSecound={"/categories"}
-          textThird="create"
-        />
-        {alert.status && <SAlert type={alert.type} message={alert.message} />}
-        <Form
-          form={form}
-          isLoading={isLoading}
-          handleChange={handleChange}
-          handleSubmit={handleSubmit}
-        />
-      </Container>
-    </>
+    <Container>
+      <SBreadCrumb
+        textSecound={'Categories'}
+        urlSecound={'/categories'}
+        textThird='Create'
+      />
+      {alert.status && <SAlert type={alert.type} message={alert.message} />}
+      <Form
+        form={form}
+        isLoading={isLoading}
+        handleChange={handleChange}
+        handleSubmit={handleSubmit}
+      />
+    </Container>
   );
 }
+
+export default CategoryCreate;

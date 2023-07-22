@@ -9,7 +9,7 @@ function listener() {
   //   karena isi auth, semua ada di folder auth
   currentAuth = store.getState().auth;
 
-  // jika cuurentAuth tidak sama dgn previousAuth maka token akan di simpan kedalam loca storage
+  // jika cuurentAuth tidak sama dgn previousAuth maka token akan di simpan kedalam local storage
   // dengan nama auth
   if (currentAuth !== previousAuth) {
     localStorage.setItem("auth", JSON.stringify(currentAuth));

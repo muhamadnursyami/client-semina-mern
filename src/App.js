@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import SigninPage from "./pages/signin";
-import DashboardPage from "./pages/dashboard";
-import CategoriesPage from "./pages/categories";
-import CategoriesCreate from "./pages/categories/create";
-import CategoriesEdit from "./pages/categories/edit";
+import { BrowserRouter } from "react-router-dom";
+import { AppRoutes } from "./routes/index";
 import { listen } from "./redux/listener";
 function App() {
+  // function ini dia kan menghandle token, dia akan mengset/menambahkan tokennya di local store browser
+  // sebelumnya ketika kita sigin token nya hanya di simpan di redux bukan di local storenya
+  // listen ini di jalankan menggunakan useEffect karena dia akan berjalan di pertama kali browser di reload.
   useEffect(() => {
     listen();
   }, []);
@@ -14,13 +13,7 @@ function App() {
   // Belajar Redux Dulu sebelum lanjut ke video selanjutnya KEEP STRONG MYSELF
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<DashboardPage />}></Route>
-        <Route path="signin" element={<SigninPage />}></Route>
-        <Route path="categories" element={<CategoriesPage />}></Route>
-        <Route path="categories/create" element={<CategoriesCreate />}></Route>
-        <Route path="categories/edit" element={<CategoriesEdit />}></Route>
-      </Routes>
+      <AppRoutes />
     </BrowserRouter>
   );
 }
