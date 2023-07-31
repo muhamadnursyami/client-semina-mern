@@ -40,6 +40,7 @@ function EventPage() {
   }, [dispatch]);
 
   const handleDelete = (id) => {
+    console.log(` Handle Delete id : ${id}`);
     Swal.fire({
       title: "Apa kamu yakin?",
       text: "Anda tidak akan dapat mengembalikan ini!",

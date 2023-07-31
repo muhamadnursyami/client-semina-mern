@@ -53,7 +53,13 @@ function PageSignin() {
       // // nyimpan token ke localstorage, setItem ada 2 paramater , 1: KEY, 2: VALUENYA.
       // localStorage.setItem("token", res.data.data.token);
       // Cara baru untuk menganti yang diatas jadi redux.
-      dispatch(userLogin(res.data.data.token, res.data.data.role));
+      dispatch(
+        userLogin(
+          res.data.data.token,
+          res.data.data.role,
+          res.data.data.refreshToken
+        )
+      );
       // jika dia sukses signin maka akan di kembalikan menjadi false
       setIsLoading(false);
       // untuk pindah ke halaman dashboard

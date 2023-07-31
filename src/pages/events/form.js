@@ -1,176 +1,231 @@
-import React, { useEffect } from "react";
-import { Col, Container, Row } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import BreadCrumb from "../../components/Breadcrumb";
+import React from "react";
+import {
+  CloseButton,
+  Col,
+  Figure,
+  Form,
+  FormControl,
+  InputGroup,
+  Row,
+} from "react-bootstrap";
 import Button from "../../components/Button";
-import Table from "../../components/TableWithAction";
-import SearchInput from "../../components/SearchInput";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  fetchEvents,
-  setKeyword,
-  setCategory,
-  setTalent,
-} from "../../redux/events/actions";
-import SAlert from "../../components/Alert";
-import Swal from "sweetalert2";
-import { deleteData, putData } from "../../utils/fetch";
-import { setNotif } from "../../redux/notif/actions";
+import TextInputWithLabel from "../../components/TextInputWIthLabel/index";
 import SelectBox from "../../components/SelectBox";
-import {
-  fetchListCategories,
-  fetchListTalents,
-} from "../../redux/lists/actions";
+import { config } from "../../config/index";
 
-function EventPage() {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const notif = useSelector((state) => state.notif);
-  const events = useSelector((state) => state.events);
-  const lists = useSelector((state) => state.lists);
-
-  useEffect(() => {
-    dispatch(fetchEvents());
-  }, [dispatch, events.keyword, events.category, events.talent]);
-
-  useEffect(() => {
-    dispatch(fetchListTalents());
-    dispatch(fetchListCategories());
-  }, [dispatch]);
-
-  const handleDelete = (id) => {
-    Swal.fire({
-      title: "Apa kamu yakin?",
-      text: "Anda tidak akan dapat mengembalikan ini!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Iya, Hapus",
-      cancelButtonText: "Batal",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const res = await deleteData(`/cms/events/${id}`);
-
-        dispatch(
-          setNotif(
-            true,
-            "success",
-            `berhasil hapus speaker ${res.data.data.title}`
-          )
-        );
-
-        dispatch(fetchEvents());
-      }
-    });
-  };
-
-  const handleChangeStatus = (id, status) => {
-    Swal.fire({
-      title: "Apa kamu yakin?",
-      text: "",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Iya, Ubah Status",
-      cancelButtonText: "Batal",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const payload = {
-          statusEvent: status === "Published" ? "Draft" : "Published",
-        };
-        const res = await putData(`/cms/events/${id}/status`, payload);
-
-        dispatch(
-          setNotif(
-            true,
-            "success",
-            `berhasil ubah status event ${res.data.data.title}`
-          )
-        );
-
-        dispatch(fetchEvents());
-      }
-    });
-  };
-
+export default function EventsForm({
+  handleSubmit,
+  form,
+  handleChange,
+  isLoading,
+  edit,
+  lists,
+  handlePlusKeyPoint,
+  handleChangeKeyPoint,
+  handleMinusKeyPoint,
+  handlePlusTicket,
+  handleMinusTicket,
+  handleChangeTicket,
+}) {
   return (
-    <Container className="mt-3">
-      <Button action={() => navigate("/events/create")}>Tambah</Button>
-      <BreadCrumb textSecound={"Events"} />
+    <Form className="mb-2">
       <Row>
         <Col>
-          <SearchInput
-            name="keyword"
-            query={events.keyword}
-            handleChange={(e) => dispatch(setKeyword(e.target.value))}
+          <TextInputWithLabel
+            placeholder={"Masukan judul"}
+            label={"Judul"}
+            name="title"
+            value={form.title}
+            type="text"
+            onChange={handleChange}
+          />
+        </Col>
+        <Col>
+          <TextInputWithLabel
+            placeholder={"Masukan tagline"}
+            label={"Tagline"}
+            name="tagline"
+            value={form.tagline}
+            type="text"
+            onChange={handleChange}
+          />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <TextInputWithLabel
+            placeholder={"Masukan tanggal acara"}
+            label={"Tanggal"}
+            name="date"
+            value={form.date}
+            type="datetime-local"
+            onChange={handleChange}
           />
         </Col>
         <Col>
           <SelectBox
-            placeholder={"Masukan pencarian kategori"}
+            label={"Category"}
+            placeholder={"Masukan kategori"}
             name="category"
-            value={events.category}
+            value={form.category}
             options={lists.categories}
             isClearable={true}
-            handleChange={(e) => dispatch(setCategory(e))}
+            handleChange={(e) => handleChange(e)}
+          />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <TextInputWithLabel
+            placeholder={"Masukan about"}
+            label={"About"}
+            name="about"
+            value={form.about}
+            type="text"
+            onChange={handleChange}
           />
         </Col>
         <Col>
-          <SelectBox
-            placeholder={"Masukan pencarian pembicara"}
-            name="talents"
-            value={events.talent}
-            options={lists.talents}
-            isClearable={true}
-            handleChange={(e) => dispatch(setTalent(e))}
+          <TextInputWithLabel
+            placeholder={"Masukan tempat acara"}
+            label={"Tempat acara"}
+            name="venueName"
+            value={form.venueName}
+            type="text"
+            onChange={handleChange}
           />
         </Col>
       </Row>
 
-      {notif.status && (
-        <SAlert type={notif.typeNotif} message={notif.message} />
-      )}
-      <Table
-        status={events.status}
-        thead={[
-          "Judul",
-          "Tanggal",
-          "Tempat",
-          "Status",
-          "Kategori",
-          "Pembicara",
-          "Aksi",
-        ]}
-        data={events.data}
-        tbody={[
-          "title",
-          "date",
-          "venueName",
-          "statusEvent",
-          "categoryName",
-          "talentName",
-        ]}
-        editUrl={`/events/edit`}
-        deleteAction={(id) => handleDelete(id)}
-        customAction={(id, status = "") => {
-          return (
-            <Button
-              className={"mx-2"}
-              variant="primary"
-              size={"sm"}
-              action={() => handleChangeStatus(id, status)}
+      <Form.Label>Key Point</Form.Label>
+      <Row>
+        {form.keyPoint.map((key, index) => (
+          <Col sm={6}>
+            <InputGroup className="mb-3" key={index}>
+              <FormControl
+                placeholder="Masukan keypoint"
+                value={key}
+                type="text"
+                name="key"
+                onChange={(e) => {
+                  handleChangeKeyPoint(e, index);
+                }}
+              />
+              {index !== 0 && (
+                <InputGroup.Text id="basic-addon2">
+                  <CloseButton onClick={() => handleMinusKeyPoint(index)} />
+                </InputGroup.Text>
+              )}
+            </InputGroup>
+          </Col>
+        ))}
+      </Row>
+
+      <Button variant="success" action={handlePlusKeyPoint} size="sm">
+        Tambah keypoint
+      </Button>
+
+      <Row>
+        <Col>
+          <SelectBox
+            label={"Speaker"}
+            placeholder={"Masukan pembica"}
+            name="talent"
+            value={form.talent}
+            options={lists.talents}
+            isClearable={true}
+            handleChange={(e) => handleChange(e)}
+          />
+        </Col>
+        <Col>
+          <TextInputWithLabel
+            placeholder={"Masukan Avatar"}
+            label={"Cover"}
+            name="avatar"
+            // value={form.avatar}
+            type="file"
+            onChange={handleChange}
+          />
+          {form.avatar !== "" && (
+            <div>
+              <Figure>
+                <Figure.Image
+                  width={171}
+                  height={180}
+                  alt="171x180"
+                  src={`${config.api_image}/${form.avatar}`}
+                />
+
+                <Figure.Caption>Perview image cover</Figure.Caption>
+              </Figure>
+            </div>
+          )}
+        </Col>
+      </Row>
+
+      <Form.Label>Tiket</Form.Label>
+
+      {form.tickets.map((tic, index) => (
+        <Row>
+          <Col sm={6}>
+            <TextInputWithLabel
+              placeholder={"Masukan tipe tiket"}
+              label={"type"}
+              name="type"
+              value={tic.type}
+              type="text"
+              onChange={(e) => handleChangeTicket(e, index)}
+            />
+          </Col>
+          <Col sm={6}>
+            <TextInputWithLabel
+              placeholder={"Masukan Harga"}
+              label={"Harga"}
+              name="price"
+              value={tic.price}
+              type="number"
+              onChange={(e) => handleChangeTicket(e, index)}
+            />
+          </Col>
+          <Col sm={6}>
+            <TextInputWithLabel
+              placeholder={"Masukan tipe tiket"}
+              label={"Stock"}
+              name="stock"
+              value={tic.stock}
+              type="number"
+              onChange={(e) => handleChangeTicket(e, index)}
+            />
+          </Col>
+          <Col sm={index !== 0 ? 5 : 6}>
+            <TextInputWithLabel
+              placeholder={"Masukan status"}
+              label={"Status"}
+              name="status"
+              value={tic.status}
+              type="text"
+              onChange={(e) => handleChangeTicket(e, index)}
+            />
+          </Col>
+          {index !== 0 && (
+            <Col
+              sm={1}
+              className="d-flex justify-content-end align-items-center"
             >
-              Change Status
-            </Button>
-          );
-        }}
-        withoutPagination
-      />
-    </Container>
+              <CloseButton onClick={() => handleMinusTicket(index)} />
+            </Col>
+          )}
+        </Row>
+      ))}
+      <div className="mb-3">
+        <Button variant="success" action={handlePlusTicket} size="sm">
+          Tambah Ticket
+        </Button>
+      </div>
+
+      <Button variant="primary" action={handleSubmit} loading={isLoading}>
+        {edit ? "Ubah" : "Simpan"}
+      </Button>
+    </Form>
   );
 }
-
-export default EventPage;

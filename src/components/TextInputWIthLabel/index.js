@@ -1,10 +1,11 @@
 import React from "react";
-import Form from "react-bootstrap/Form";
+import { Form } from "react-bootstrap";
 import TextInput from "../TextInput";
-export default function TextInputWithLabel({
+
+function TextInputWithLabel({
   label,
   name,
-  value,
+  value, // state
   type,
   onChange,
   placeholder,
@@ -13,12 +14,14 @@ export default function TextInputWithLabel({
     <Form.Group className="mb-2">
       <Form.Label>{label}</Form.Label>
       <TextInput
+        type={type}
         name={name}
         value={value}
-        type={type}
-        onChange={onChange}
         placeholder={placeholder}
+        onChange={onChange}
       />
     </Form.Group>
   );
 }
+
+export default TextInputWithLabel;
